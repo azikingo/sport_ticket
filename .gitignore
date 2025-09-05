@@ -1,0 +1,54 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Go build artifacts
+*.a
+*.o
+
+# Output of go build / go install
+bin/
+build/
+
+# Dependency directories
+vendor/
+
+# IDE / Editor settings
+.vscode/
+.idea/
+*.swp
+*~
+*.iml
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test coverage
+*.cover
+*.cov
+coverage.out
+
+# Environment & config
+.env
+*.local
+
+# Generated docs
+*.doc
+*.pdf
+
+# JetBrains / Goland specific
+*.ipr
+*.iws
+
+# Backup
+*.bak
+*.tmp

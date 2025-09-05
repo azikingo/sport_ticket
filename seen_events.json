@@ -1,0 +1,69 @@
+{
+  "events": {
+    "https://ticketon.kz/almaty/event/aca-192-v-almaty": {
+      "title": "АСА 192 в Алматы",
+      "href": "https://ticketon.kz/almaty/event/aca-192-v-almaty",
+      "datetime": "вс 14 сен, 18:00",
+      "price": "от 6000",
+      "poster_url": "https://ticketon.kz/media/upload/59623u57260_aca-192-v-almaty-29-08.png",
+      "currency": "KZT"
+    },
+    "https://ticketon.kz/almaty/event/almaty-open-2025-atp-250": {
+      "title": "Almaty Open ATP 250",
+      "href": "https://ticketon.kz/almaty/event/almaty-open-2025-atp-250",
+      "datetime": "пн 13 окт, 18:20",
+      "price": "от 4500",
+      "poster_url": "https://ticketon.kz/media/upload/57947u57260_almaty-open-2025-atp-250-1208.png",
+      "currency": "KZT"
+    },
+    "https://ticketon.kz/almaty/event/eco-auto-expo-2025-almaty": {
+      "title": "ECO AUTO EXPO 2025",
+      "href": "https://ticketon.kz/almaty/event/eco-auto-expo-2025-almaty",
+      "datetime": "завтра, 12:00",
+      "price": "от 4000",
+      "poster_url": "https://ticketon.kz/media/upload/59620u30705_eco-auto-expo-2025-2025-08-29-170454.png",
+      "currency": "KZT"
+    },
+    "https://ticketon.kz/almaty/event/formula1-v-baku": {
+      "title": "Formula 1 Qatar Airways Azerbaijan Grand-Prix 2025 в Баку",
+      "href": "https://ticketon.kz/almaty/event/formula1-v-baku",
+      "datetime": "пт 19 сен, 12:30",
+      "price": "от 268500",
+      "poster_url": "https://ticketon.kz/media/upload/59447u45664_formula1-v-baku2026.png",
+      "currency": "KZT"
+    },
+    "https://ticketon.kz/almaty/event/hk-almaty-hk-gornyak": {
+      "title": "ХК «Алматы» - ХК «Горняк»",
+      "href": "https://ticketon.kz/almaty/event/hk-almaty-hk-gornyak",
+      "datetime": "пн 8 сен, 19:30",
+      "price": "",
+      "poster_url": "https://ticketon.kz/media/upload/59680u57260_hk-almaty-hk-gornyak-0209.jpeg",
+      "currency": "KZT"
+    },
+    "https://ticketon.kz/almaty/event/octagon-78": {
+      "title": "OCTAGON 78",
+      "href": "https://ticketon.kz/almaty/event/octagon-78",
+      "datetime": "вс 7 сен, 17:00",
+      "price": "",
+      "poster_url": "https://ticketon.kz/media/upload/59528u57260_octagon-78-2608.jpg",
+      "currency": "KZT"
+    },
+    "https://ticketon.kz/almaty/event/porsche-experience-kazakhstan": {
+      "title": "Porsche Experience Kazakhstan",
+      "href": "https://ticketon.kz/almaty/event/porsche-experience-kazakhstan",
+      "datetime": "завтра, 09:00",
+      "price": "от 320000",
+      "poster_url": "https://ticketon.kz/media/upload/59478u45664_porsche-expirience-kazakhstan2025.png",
+      "currency": "KZT"
+    },
+    "https://ticketon.kz/almaty/event/tekhnicheskiy-seans": {
+      "title": "Техническое событие",
+      "href": "https://ticketon.kz/almaty/event/tekhnicheskiy-seans",
+      "datetime": "вс 30 ноя, 20:00",
+      "price": "от 100",
+      "poster_url": "https://ticketon.kz/rrs/placeholders/posterPlaceholder.png",
+      "currency": "KZT"
+    }
+  },
+  "last_check": "2025-09-05T18:25:48.706342+05:00"
+}
