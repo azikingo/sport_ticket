@@ -66,13 +66,18 @@ func main() {
 		log.Println("Warning: .env file not found, using system environment variables")
 	}
 
-	// Setup logging
-	logFile, err := os.OpenFile("checker.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
-	if err != nil {
-		log.Fatal("Failed to open log file:", err)
+	// Load configuration from environment
+	environment := os.Getenv("ENVIRONMENT")
+	if environment == "LOCAL" {
+		// Setup logging
+		logFile, err := os.OpenFile("checker.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+		if err != nil {
+			fmt.Println("Failed to open log file:", err)
+		}
+		defer logFile.Close()
+		log.SetOutput(logFile)
 	}
-	defer logFile.Close()
-	log.SetOutput(logFile)
+
 	log.Println("Starting Ticketon checker...")
 
 	// Load configuration from environment
