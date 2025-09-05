@@ -31,7 +31,7 @@ import (
 
 const (
 	url             = "https://ticketon.kz/almaty/sports"
-	pollInterval    = 50 * time.Second
+	pollInterval    = 30 * time.Second
 	seenEventsFile  = "seen_events.json"
 	subscribersFile = "subscribers.txt"
 	notifyInterval  = 10 * time.Second // Increased to avoid spam
@@ -214,6 +214,14 @@ func (app *App) checkEvents() {
 	app.eventDataMu.Lock()
 	existingEvents := len(app.eventData.Events)
 	app.eventDataMu.Unlock()
+
+	if existingEvents > len(newEvents) {
+		app.eventDataMu.Lock()
+		app.eventData.Events = make(map[string]Event)
+		app.eventDataMu.Unlock()
+
+		existingEvents = 0
+	}
 
 	if existingEvents == 0 {
 		// First run - just save events without notifying
@@ -674,7 +682,7 @@ func (app *App) notifySubscribers(events []Event) {
 }
 
 func (app *App) sendTelegramNotifications(chatID int64, events []Event) {
-	message := app.formatEventMessage(events)
+	message := app.formatEventMessage(events, true)
 
 	msg := tgbotapi.NewMessage(chatID, message)
 	msg.ParseMode = "HTML"
@@ -692,7 +700,7 @@ func (app *App) sendTelegramNotifications(chatID int64, events []Event) {
 }
 
 func (app *App) spamTelegramNotifications(chatID int64, events []Event, stopChan chan struct{}) {
-	message := app.formatEventMessage(events)
+	message := app.formatEventMessage(events, true)
 	ticker := time.NewTicker(notifyInterval)
 	defer ticker.Stop()
 
@@ -729,11 +737,15 @@ func (app *App) spamTelegramNotifications(chatID int64, events []Event, stopChan
 	}
 }
 
-func (app *App) formatEventMessage(events []Event) string {
+func (app *App) formatEventMessage(events []Event, isNew bool) string {
 	if len(events) == 1 {
 		event := events[0]
 
-		message := fmt.Sprintf("🎉 <b>New Sports Event!</b>\n\n<b>%s</b>\n", event.Title)
+		message := fmt.Sprintf("📋 <b>All Sports Event!</b>\n\n<b>%s</b>\n", event.Title)
+		if isNew {
+			log.Printf("new event")
+			message = fmt.Sprintf("🎉 <b>New Sports Event!</b>\n\n<b>%s</b>\n", event.Title)
+		}
 
 		if event.DateTime != "" {
 			message += fmt.Sprintf("📅 %s\n", event.DateTime)
@@ -748,7 +760,11 @@ func (app *App) formatEventMessage(events []Event) string {
 	}
 
 	var sb strings.Builder
-	sb.WriteString(fmt.Sprintf("🎉 <b>%d New Sports Events!</b>\n\n", len(events)))
+	if isNew {
+		sb.WriteString(fmt.Sprintf("🎉 <b>%d New Sports Events!</b>\n\n", len(events)))
+	} else {
+		sb.WriteString(fmt.Sprintf("📋 <b>%d All Sports Events!</b>\n\n", len(events)))
+	}
 
 	for i, event := range events {
 		if i > 0 {
@@ -799,6 +815,8 @@ func (app *App) listenForCommands() {
 				app.handleRemoveSubscriber(chatID, text)
 			case text == "/list" && chatID == app.adminChatID:
 				app.handleListSubscribers(chatID)
+			case text == "/events":
+				app.handleListEvents(chatID)
 			case text == "/stop":
 				app.handleStopNotifications(chatID)
 			case text == "/status":
@@ -895,7 +913,7 @@ func (app *App) handleStopNotifications(chatID int64) {
 	}
 }
 
-func (app *App) handleStatus(adminChatID int64) {
+func (app *App) handleStatus(chatID int64) {
 	app.eventDataMu.RLock()
 	eventCount := len(app.eventData.Events)
 	lastCheck := app.eventData.LastCheck
@@ -921,29 +939,39 @@ func (app *App) handleStatus(adminChatID int64) {
 		lastCheck.Format("2006-01-02 15:04:05"),
 		url, pollInterval)
 
-	msg := tgbotapi.NewMessage(adminChatID, status)
+	msg := tgbotapi.NewMessage(chatID, status)
 	msg.ParseMode = "HTML"
 	app.bot.Send(msg)
 }
 
-func (app *App) handleTest(adminChatID int64) {
+func (app *App) handleListEvents(chatID int64) {
 	events := slices.Collect(maps.Values(app.eventData.Events))
 
-	app.sendMessage(adminChatID, "🧪 Sending test notification...")
+	message := app.formatEventMessage(events, false)
 
-	testEvents := []Event{events[rand.Intn(len(events)-1)]}
-	message := app.formatEventMessage(testEvents)
-
-	msg := tgbotapi.NewMessage(adminChatID, message)
+	msg := tgbotapi.NewMessage(chatID, message)
 	msg.ParseMode = "HTML"
 	app.bot.Send(msg)
 }
 
-func (app *App) handleForceCheck(adminChatID int64) {
-	app.sendMessage(adminChatID, "🔄 Force checking for new events...")
+func (app *App) handleTest(chatID int64) {
+	events := slices.Collect(maps.Values(app.eventData.Events))
+
+	app.sendMessage(chatID, "🧪 Sending test notification...")
+
+	testEvents := []Event{events[rand.Intn(len(events)-1)]}
+	message := app.formatEventMessage(testEvents, true)
+
+	msg := tgbotapi.NewMessage(chatID, message)
+	msg.ParseMode = "HTML"
+	app.bot.Send(msg)
+}
+
+func (app *App) handleForceCheck(chatID int64) {
+	app.sendMessage(chatID, "🔄 Force checking for new events...")
 	go func() {
 		app.checkEvents()
-		app.sendMessage(adminChatID, "✅ Force check completed")
+		app.sendMessage(chatID, "✅ Force check completed")
 	}()
 }
 
@@ -951,11 +979,12 @@ func (app *App) handleHelp(chatID int64) {
 	help := `🤖 <b>Ticketon Sports Event Checker</b>
 
 Available commands:
-🔕 /stop - Stop notifications for this chat
+🔕 /stop - Stop spam notifications on active spam
 📊 /status - Show bot status
 🧪 /test - Send test notification
 🔄 /check - Force check for events
-❓ /help - Show this help message`
+❓ /help - Show this help message
+📋 /events - List all sport events`
 
 	if chatID == app.adminChatID {
 		help += `
